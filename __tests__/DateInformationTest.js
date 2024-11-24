@@ -1,4 +1,4 @@
-import { DateInformation } from '../src/model/DateInformation.js';
+import DateInformation from '../src/model/DateInformation.js';
 
 describe('날짜 정보 클래스 테스트', () => {
   test('날짜별로 평일 또는 휴일인지 할당한 월 정보를 얻을 수 있다. ', () => {

@@ -1,6 +1,6 @@
 import { endDayInfo, publicHolidays } from '../constant/date.js';
 
-export class DateInformation {
+export default class DateInformation {
   constructor(month, startDay) {
     this.month = month;
     this.startDay = startDay;
