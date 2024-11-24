@@ -10,4 +10,8 @@ export default class OutputView {
       Console.print(`${month}월 ${date}일 ${dateInfo.day} ${dateInfo.manager}`);
     }
   }
+
+  printError(message) {
+    Console.print(message);
+  }
 }
