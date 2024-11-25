@@ -3,15 +3,15 @@ export default class EmergencyWorkersList {
     this.weekdaysWorkersList = weekdaysWorkersList;
     this.dayOffWorkersList = dayOffWorkersList;
     this.monthInfo = monthInfo;
+    this.previousIndex = 0;
   }
 
   // eslint-disable-next-line max-lines-per-function
   assignEmergencyWorkerList() {
-    const emergencyWorkerList = {};
+    const emergencyWorkerList = this.copyMonthInfo();
     let weekdaysIndex = 0;
     let dayOffIndex = 0;
     for (const [date, dateInfo] of Object.entries(this.monthInfo)) {
-      emergencyWorkerList[date] = { ...dateInfo };
       const beforeInfo = emergencyWorkerList[Number(date) - 1];
       if (dateInfo.type === '평일') {
         this.assignWeekdays(beforeInfo, emergencyWorkerList, date, weekdaysIndex);
@@ -25,52 +25,48 @@ export default class EmergencyWorkersList {
     return emergencyWorkerList;
   }
 
+  // eslint-disable-next-line max-lines-per-function
   assignWeekdays(beforeInfo, emergencyWorkerList, date, weekdaysIndex) {
     const weekdaysWorkersListLength = this.weekdaysWorkersList.length;
-    let isChange = false;
+    let index = weekdaysIndex;
+    if (this.previousIndex !== 0) {
+      index = this.previousIndex;
+      this.previousIndex = 0;
+    }
     if (this.isChangeOrder(beforeInfo, '휴일', this.weekdaysWorkersList, weekdaysIndex)) {
-      this.changeOrder(this.weekdaysWorkersList, weekdaysIndex);
-      isChange = true;
+      this.previousIndex = weekdaysIndex;
+      index = weekdaysIndex + 1;
     }
     emergencyWorkerList[date] = {
       ...emergencyWorkerList[date],
-      manager: this.weekdaysWorkersList[weekdaysIndex % weekdaysWorkersListLength],
+      manager: this.weekdaysWorkersList[index % weekdaysWorkersListLength],
     };
-    if (isChange) {
-      this.changeOrder(this.weekdaysWorkersList, weekdaysIndex);
-    }
   }
 
+  // eslint-disable-next-line max-lines-per-function
   assignDayOff(beforeInfo, emergencyWorkerList, date, dayOffIndex) {
     const dayOffWorkersListLength = this.dayOffWorkersList.length;
-    let isChange = false;
+    let index = dayOffIndex;
+    if (this.previousIndex !== 0) {
+      index = this.previousIndex;
+      this.previousIndex = 0;
+    }
     if (this.isChangeOrder(beforeInfo, '평일', this.dayOffWorkersList, dayOffIndex)) {
-      this.changeOrder(this.dayOffWorkersList, dayOffIndex);
-      isChange = true;
+      this.previousIndex = dayOffIndex;
+      index = dayOffIndex + 1;
     }
     emergencyWorkerList[date] = {
       ...emergencyWorkerList[date],
-      manager: this.dayOffWorkersList[dayOffIndex % dayOffWorkersListLength],
+      manager: this.dayOffWorkersList[index % dayOffWorkersListLength],
     };
-    if (isChange) {
-      this.changeOrder(this.dayOffWorkersList, dayOffIndex);
+  }
+
+  copyMonthInfo() {
+    const copyMonthInfo = {};
+    for (const [date, dateInfo] of Object.entries(this.monthInfo)) {
+      copyMonthInfo[date] = { ...dateInfo };
     }
-  }
-
-  changeOrder(workersList, workersListIndex) {
-    const workersListLength = workersList.length;
-    let temp = workersList[workersListIndex % workersListLength];
-    workersList[workersListIndex % workersListLength] =
-      workersList[(workersListIndex + 1) % workersListLength];
-    workersList[(workersListIndex + 1) % workersListLength] = temp;
-  }
-
-  changeOrder2(workersList, workersListIndex) {
-    const workersListLength = workersList.length;
-    let temp = workersList[workersListIndex % workersListLength];
-    workersList[workersListIndex % workersListLength] =
-      workersList[(workersListIndex + 1) % workersListLength];
-    workersList[(workersListIndex + 1) % workersListLength] = temp;
+    return copyMonthInfo;
   }
 
   isChangeOrder(beforeInfo, type, workersList, workersListIndex) {
