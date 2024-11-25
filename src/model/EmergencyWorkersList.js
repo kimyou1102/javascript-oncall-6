@@ -27,38 +27,37 @@ export default class EmergencyWorkersList {
 
   // eslint-disable-next-line max-lines-per-function
   assignWeekdays(beforeInfo, emergencyWorkerList, date, weekdaysIndex) {
-    const weekdaysWorkersListLength = this.weekdaysWorkersList.length;
-    let index = weekdaysIndex;
-    if (this.previousIndex !== 0) {
-      index = this.previousIndex;
-      this.previousIndex = 0;
-    }
+    let index = this.getIndex(weekdaysIndex);
     if (this.isChangeOrder(beforeInfo, '휴일', this.weekdaysWorkersList, weekdaysIndex)) {
       this.previousIndex = weekdaysIndex;
       index = weekdaysIndex + 1;
     }
     emergencyWorkerList[date] = {
       ...emergencyWorkerList[date],
-      manager: this.weekdaysWorkersList[index % weekdaysWorkersListLength],
+      manager: this.weekdaysWorkersList[index % this.weekdaysWorkersList.length],
     };
   }
 
   // eslint-disable-next-line max-lines-per-function
   assignDayOff(beforeInfo, emergencyWorkerList, date, dayOffIndex) {
-    const dayOffWorkersListLength = this.dayOffWorkersList.length;
-    let index = dayOffIndex;
-    if (this.previousIndex !== 0) {
-      index = this.previousIndex;
-      this.previousIndex = 0;
-    }
+    let index = this.getIndex(dayOffIndex);
     if (this.isChangeOrder(beforeInfo, '평일', this.dayOffWorkersList, dayOffIndex)) {
       this.previousIndex = dayOffIndex;
       index = dayOffIndex + 1;
     }
     emergencyWorkerList[date] = {
       ...emergencyWorkerList[date],
-      manager: this.dayOffWorkersList[index % dayOffWorkersListLength],
+      manager: this.dayOffWorkersList[index % this.dayOffWorkersList.length],
     };
+  }
+
+  getIndex(workersListIndex) {
+    let index = workersListIndex;
+    if (this.previousIndex !== 0) {
+      index = this.previousIndex;
+      this.previousIndex = 0;
+    }
+    return index;
   }
 
   copyMonthInfo() {
