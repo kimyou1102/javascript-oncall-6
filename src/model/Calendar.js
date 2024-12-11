@@ -22,6 +22,7 @@ export default class Calendar {
       calendar[i] = {
         day,
         type: this.getDayType(day, i),
+        name: '',
       };
     }
     return calendar;
