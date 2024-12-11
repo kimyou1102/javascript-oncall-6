@@ -1,15 +1,42 @@
 import InputView from '../view/InputView.js';
 import OutputView from '../view/OutputView.js';
 import Calendar from '../model/Calendar.js';
+import { validateDate, validateWokerList } from '../utils/validation.js';
 
 export default class Controller {
   async start() {
-    const [month, day] = await InputView.getAllocationDate();
-    const weekDayWorkList = await InputView.getWeekdayWorkList();
-    const holidayWorkList = await InputView.getHolidayWorkList();
+    const [month, day] = await this.getAllocationDate();
+    const { weekDayWorkList, holidayWorkList } = await this.getWorkerList();
     const calendar = new Calendar(month, day).getCalendar();
     this.assignmentWork(weekDayWorkList, holidayWorkList, calendar);
     OutputView.printWorkSchedule(month, calendar);
+  }
+
+  async getAllocationDate() {
+    try {
+      const input = await InputView.getAllocationDate();
+      validateDate(input);
+      return input.split(',');
+    } catch (error) {
+      OutputView.printError(error.message);
+      return await this.getAllocationDate();
+    }
+  }
+
+  async getWorkerList() {
+    try {
+      const weekDayWorkList = await InputView.getWeekdayWorkList();
+      validateWokerList(weekDayWorkList);
+      const holidayWorkList = await InputView.getHolidayWorkList();
+      validateWokerList(holidayWorkList);
+      return {
+        weekDayWorkList: weekDayWorkList.split(','),
+        holidayWorkList: holidayWorkList.split(','),
+      };
+    } catch (error) {
+      OutputView.printError(error.message);
+      return await this.getWorkerList();
+    }
   }
 
   // eslint-disable-next-line max-lines-per-function
