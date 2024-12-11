@@ -1,4 +1,5 @@
 import InputView from '../view/InputView.js';
+import OutputView from '../view/OutputView.js';
 import Calendar from '../model/Calendar.js';
 
 export default class Controller {
@@ -8,6 +9,7 @@ export default class Controller {
     const holidayWorkList = await InputView.getHolidayWorkList();
     const calendar = new Calendar(month, day).getCalendar();
     this.assignmentWork(weekDayWorkList, holidayWorkList, calendar);
+    OutputView.printWorkSchedule(month, calendar);
   }
 
   // eslint-disable-next-line max-lines-per-function
