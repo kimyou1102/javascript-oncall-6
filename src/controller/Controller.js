@@ -1,10 +1,11 @@
 import InputView from '../view/InputView.js';
+import Calendar from '../model/Calendar.js';
 
 export default class Controller {
   async start() {
-    const dateInput = InputView.getAllocationDate();
-    const [month, day] = dateInput.split(',');
-    const weekDayWorkList = InputView.getWeekdayWorkList();
-    const holidayWorkList = InputView.getHolidayWorkList();
+    const [month, day] = await InputView.getAllocationDate();
+    const weekDayWorkList = await InputView.getWeekdayWorkList();
+    const holidayWorkList = await InputView.getHolidayWorkList();
+    const calendar = new Calendar(month, day).getCalendar();
   }
 }
