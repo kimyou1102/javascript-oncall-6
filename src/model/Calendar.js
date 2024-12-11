@@ -39,7 +39,8 @@ export default class Calendar {
   }
 
   getWeek() {
-    const index = defaultWeek.indexOf(this.#day);
-    return [...defaultWeek.splice(index), ...defaultWeek.splice(0, index)];
+    const week = [...defaultWeek];
+    const index = week.indexOf(this.#day);
+    return [...week.splice(index), ...week.splice(0, index)];
   }
 }
